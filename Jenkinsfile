@@ -47,6 +47,23 @@ pipeline {
              }
           }
      }
+    stage('Push image on dockerhub') {
+           agent any
+           environment {
+                DOCKERHUB_LOGIN = credentials('dockerhub_ayoub')
+
+            }
+
+           steps {
+               script {
+                   sh '''
+                   docker login --username ${DOCKERHUB_LOGIN_USR} --password ${DOCKERHUB_LOGIN_PSW}
+                   docker push ${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
+                   '''
+               }
+           }
+        }
+
      stage('Push image in staging and deploy it') {
        when {
               expression { GIT_BRANCH == 'origin/master' }
